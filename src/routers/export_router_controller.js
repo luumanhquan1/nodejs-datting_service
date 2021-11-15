@@ -1,0 +1,1 @@
+exports.LoginControler =require('../controllers/login_controller');
