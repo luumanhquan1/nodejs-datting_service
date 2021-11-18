@@ -1,30 +1,50 @@
 const db = require('../config/dbConfig');
 const ApiClient = require('../BusinessLayer/api_client');
 const util = require('util');
+const cheerio = require('cheerio');
+const { Console } = require('console');
 const query = util.promisify(db.query).bind(db);
 class LoginService {
     async isLogin(username, password) {
         var data = [];
 
-        let rows = await query('SELECT * from account WHERE username=? AND password=?', [username, password]);
+        let rows = await query('SELECT * from userinfor WHERE username=?', [username]);
         for (var i = 0; i < rows.length; i++) {
             data.push(rows.at(i));
         }
         return data;
     }
-
+    async insertInfoUser(user) {
+        let rows = await query('INSERT INTO `userinfor`(id, username, hoTen, gender, ngaySinh) VALUES (?,?,?,?,?)', [user.id, user.username,user.hoTen,user.gioiTinh,user.ngaySinh]);
+    }
     getUserInfoKMA(username, password) {
 
-        this.#_getCookie(this.getInfo).then(function (value) {
-    
-        });
+        return this.#_getCookie(this.getInfo, username, password);
     }
     getInfo(cookie) {
-        ApiClient.get({},'http://qldt.actvn.edu.vn/CMCSoft.IU.Web.Info/StudentProfileNew/HoSoSinhVien.aspx',cookie).then((value)=>{
-            console.log(value.response.body);
-        })
+        return new Promise((resolve, reject) => {
+            ApiClient.get({}, 'http://qldt.actvn.edu.vn/CMCSoft.IU.Web.Info/StudentProfileNew/HoSoSinhVien.aspx', cookie).then((value) => {
+                var $ = cheerio.load(value.response.body);
+                const hoTenAndMsv = $('#PageHeader1_lblUserFullName').text();
+                const hoTen = hoTenAndMsv.split('(')[0];
+                const msv = hoTenAndMsv.split('(')[1].replace(')', '');
+                let gioiTInh = '';
+                let NgaySinh = '';
+                $('#sinhvien').each((i, e) => {
+                    NgaySinh = $(e).find('input#txtNgaySinh.input_text').val();
+                    gioiTInh = $(e).find('span#gioitinh').text();
+
+                });
+                return resolve({ gender: gioiTInh, birthDay: NgaySinh, name: hoTen, studentCode: msv });
+            }).catch((err) => {
+                {
+                    return reject({ error: err });
+                }
+            })
+        });
     }
-    #_getCookie(getInfo) {
+    #_getCookie(getInfo, username, password) {
+
         var form = {
             '__EVENTTARGET': '',
             '__EVENTARGUMENT': '',
@@ -34,8 +54,8 @@ class LoginService {
             'PageHeader1$drpNgonNgu': 'E43296C6F24C4410A894F46D57D2D3AB',
             'PageHeader1$hidisNotify': '0',
             'PageHeader1$hidValueNotify': '.',
-            'txtUserName': 'AT160543',
-            'txtPassword': '6e4b2c121f86e81c16febe639020cb6b',
+            'txtUserName': username,
+            'txtPassword': password,
             'btnSubmit': 'Đăng nhập',
             'hidUserId': '',
             'hidUserFullName': '',
@@ -44,15 +64,37 @@ class LoginService {
         return new Promise((resolve, reject) => {
             try {
                 ApiClient.post(form, 'http://qldt.actvn.edu.vn/CMCSoft.IU.Web.info/Login.aspx').then(function (value) {
-                    console.log(value.response.statusCode);
-                    const setCookie = value.response.headers['set-cookie'];
-                    var cookie = ['_ga=_ga=GA1.3.1086252872.1635697678', '_gid=GA1.3.1371520451.1636995492',];
-                    cookie.push(setCookie[0].split(';')[0]);
-                    cookie.push(setCookie[1].split(';')[0]);
-                  return  cookie.join('; ');
-                }).then((value)=>{
-                    console.log(value);
-                   getInfo(value);
+
+                    var statusEnv = value.response.statusCode;
+                    if (value.response.statusCode === 302) {
+                        const setCookie = value.response.headers['set-cookie'];
+                       
+                        var cookie = ['_ga=_ga=GA1.3.1086252872.1635697678', '_gid=GA1.3.1371520451.1636995492',];
+                        if(setCookie.length==1){
+                            cookie.push(setCookie[0].split(';')[0]);
+                        }else{
+                            cookie.push(setCookie[0].split(';')[0]);
+                        cookie.push(setCookie[1].split(';')[0]);
+                        }
+                        return { cookie: cookie.join('; '), status: statusEnv };
+                    } else {
+                        return { status: statusEnv };
+                    }
+                  
+                }).then((value) => {
+                    const statusEnv = value.status;
+
+                    if (statusEnv === 302) {
+
+                        getInfo(value.cookie).then((value) => {
+                            if (value)
+                                if (value.error) reject({ error: err });
+                            return resolve({ response: value, status: statusEnv });
+                        });
+                    } else {
+
+                        resolve({ status: statusEnv });
+                    }
                 });
             } catch (err) {
                 reject({ error: err });

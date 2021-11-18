@@ -2,20 +2,22 @@ module.exports = class User {
     id = '';
     gioiTinh = '';
     ngaySinh = '';
-    lop = '';
-
-    constructor({ id, gioiTinh, ngaySinh, lop }) {
+    username = ''
+    hoTen = '';
+    constructor({ id, gioiTinh, ngaySinh, username, hoTen }) {
         this.id = id;
         this.gioiTinh = gioiTinh;
         this.ngaySinh = ngaySinh;
-        this.lop = lop;
+        this.username = username;
+        this.hoTen = hoTen;
     }
     toJson() {
         return {
             id: this.id,
             gioiTinh: this.gioiTinh,
             ngaySinh: this.ngaySinh,
-            lop: this.lop
+            msv:this.username,
+            hoTen: this.hoTen
         };
     }
 }
