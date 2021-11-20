@@ -2,19 +2,20 @@ const db = require('../config/dbConfig');
 const ApiClient = require('../BusinessLayer/api_client');
 const util = require('util');
 const cheerio = require('cheerio');
-const { Console } = require('console');
+
 const query = util.promisify(db.query).bind(db);
 class LoginService {
     async isLogin(username, password) {
       try{
         var data = [];
-
         let rows = await query('SELECT * from userinfor WHERE username=?', [username]);
-        for (var i = 0; i < rows.length; i++) {
-            data.push(rows.at(i));
+     
+        for(var vl of rows){
+           data.push(vl);
         }
         return data;
       }catch(err){
+          console.log(err);
           throw err;
       }
     }

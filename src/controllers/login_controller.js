@@ -6,12 +6,13 @@ class LoginController {
     async login(req, res) {
         try {
             export_controller.loginService.getUserInfoKMA(req.body.username, req.body.password).then(async (value) => {
-
                 if (value.status === 302) {
                     let result = await export_controller.loginService.isLogin(req.body.username, req.body.password);
+                   
                     if (result.length == 0) {
                         var user = new export_controller.User({ id: uuid.v1(), username: value.response.studentCode, hoTen: value.response.name, gioiTinh: value.response.gender, ngaySinh: value.response.birthDay });
                         const accestToken = export_controller.jwtToken.encode({ isSuccess: true, id: user.id });
+            
                         let result = await export_controller.loginService.insertInfoUser(user);
                         var json=baseJson({data:user.toJson()});
                         json['isActive']=false;
@@ -27,7 +28,6 @@ class LoginController {
                         var json = baseJson({ data: user.toJson() });
                         json['token'] = accestToken;
                         json['isActive'] = true;
-
                         res.json(json);
                     }
                 } else {
