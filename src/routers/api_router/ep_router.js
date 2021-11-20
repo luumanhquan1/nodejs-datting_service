@@ -1,0 +1,1 @@
+exports.exports=require('../export_router_controller');

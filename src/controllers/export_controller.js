@@ -1,4 +1,4 @@
 exports.loginService=require('../service/login_service');
-exports.dotenv=require('dotenv');
-exports.jwt  = require('jsonwebtoken');
 exports.User  = require('../models/user_info_model');
+exports.jwtToken=require('../config/helper/jwt_token');
+exports.soThichService=require('../service/so_thich_service');

@@ -19,7 +19,13 @@ class LoginService {
       }
     }
     async insertInfoUser(user) {
+     try{
         let rows = await query('INSERT INTO `userinfor`(id, username, hoTen, gender, ngaySinh) VALUES (?,?,?,?,?)', [user.id, user.username,user.hoTen,user.gioiTinh,user.ngaySinh]);
+        return true;
+     }catch(err){
+         return false;
+     }
+        
     }
     getUserInfoKMA(username, password) {
 
