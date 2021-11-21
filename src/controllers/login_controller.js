@@ -16,6 +16,7 @@ class LoginController {
                         let result = await export_controller.loginService.insertInfoUser(user);
                         var json=baseJson({data:user.toJson()});
                         json['isActive']=false;
+                        json['token']=accestToken;
                         if (result) {
                             res.json(json);
                         } else {
