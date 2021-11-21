@@ -8,8 +8,9 @@ function connectDb(){
         password:'76536e54',
         database:'heroku_e712c9993ee96b6',
     });
-    connect.on('error',connectDb());
 }
+connectDb();
+connect.on('error',connectDb());
 // connect.connect(function (err) {
 //     if(!!err){
 //       console.log(err);
