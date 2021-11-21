@@ -20,7 +20,7 @@ class LoginService {
     }
     async insertInfoUser(user) {
      try{
-        let rows = await query('INSERT INTO `userinfor`(id, username, hoTen, gender, ngaySinh) VALUES (?,?,?,?,?)', [user.id, user.username,user.hoTen,user.gioiTinh,user.ngaySinh]);
+        let rows = await query('INSERT INTO heroku_e712c9993ee96b6.userinfo(id, username, hoTen, gender, ngaySinh) VALUES (?,?,?,?,?)', [user.id, user.username,user.hoTen,user.gioiTinh,user.ngaySinh]);
         return true;
      }catch(err){
          return false;
