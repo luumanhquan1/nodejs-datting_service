@@ -2,12 +2,7 @@
 const mySql=require('mysql');
 let connect;
 if(process.env.CLEARDB_DATABASE_URL){
-    connect= mySql.createConnection({
-        host:'us-cdbr-east-04.cleardb.com',
-        user:'b3ce2acda04ae7',
-        password:'76536e54',
-        database:'heroku_e712c9993ee96b6',
-    });
+    connect= mySql.createConnection(process.env.CLEARDB_DATABASE_URL);
 }else{
  connect= mySql.createConnection({
     host:'localhost',
