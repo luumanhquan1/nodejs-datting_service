@@ -8,14 +8,13 @@ class LoginService {
     async isLogin(username, password) {
       try{
         var data = [];
-        let rows = await query('SELECT * from userinfor WHERE username=?', [username]);
+        let rows = await query('SELECT * from heroku_e712c9993ee96b6.userinfo WHERE username=?', [username]);
      
         for(var vl of rows){
            data.push(vl);
         }
         return data;
       }catch(err){
-          console.log(err);
           throw err;
       }
     }
