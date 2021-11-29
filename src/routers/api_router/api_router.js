@@ -15,9 +15,8 @@ apiRoute.use(function(req,res,next){
   
 });
 apiRoute.use("/so-thich",require("./so_thich_user/so_thich_router"));
-// const loginRoute=require("./login_router");
-// apiRoute.use("/get",loginRoute);
 
+apiRoute.use('/user',require("./user_infor/user_router"));
 
 
 module.exports=apiRoute;
