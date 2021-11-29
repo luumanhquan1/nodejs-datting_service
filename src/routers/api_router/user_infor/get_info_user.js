@@ -1,7 +1,5 @@
 const express = require('express');
 const router=express.Router();
-router.post('/',function(req,res){
- 
-  console.log(req.headers);
-})
+const UserInfoController=require('../../../controllers/user_infor_controller');
+router.post('/',(req,res)=>UserInfoController.getUserInfor(req,res));
 module.exports=router;
