@@ -8,11 +8,10 @@ class LoginService {
     async isLogin(username, password) {
       try{
         var data = [];
-        let rows = await query('SELECT * from userinfo WHERE username=?', [username]);
-     
+        let rows = await query('SELECT * from userinfor WHERE username=?', [username]);
         for(var vl of rows){
            data.push(vl);
-        }
+        } 
         return data;
       }catch(err){
           throw err;
@@ -20,7 +19,7 @@ class LoginService {
     }
     async insertInfoUser(user) {
      try{
-        let rows = await query('INSERT INTO userinfo(id, username, hoTen, gender, ngaySinh) VALUES (?,?,?,?,?)', [user.id, user.username,user.hoTen,user.gioiTinh,user.ngaySinh]);
+        let rows = await query('INSERT INTO userinfor(id, username, hoTen, gender, ngaySinh) VALUES (?,?,?,?,?)', [user.id, user.username,user.hoTen,user.gioiTinh,user.ngaySinh]);
         return true;
      }catch(err){
          return false;
