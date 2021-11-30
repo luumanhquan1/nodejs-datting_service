@@ -10,5 +10,14 @@ class UserInfoController{
             res.json(loiBatDinh);
         }
     }
+  async getListUser(req,res){
+    try{
+        const result=await service.getListUser();
+        res.json(baseJson({data:result}));
+    }catch(err){
+        res.json(loiBatDinh);
+    }
+     
+  }
 }
 module.exports=new UserInfoController();
