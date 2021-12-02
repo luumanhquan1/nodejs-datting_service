@@ -39,21 +39,32 @@ class SoThichService {
         }
     }
     async getSoThichUser(id) {
-     try{
-         var listSoThich=[];
-        const rows = await query('SELECT usersothich.id,usersothich.idSoThich,sothich.name,sothich.url FROM usersothich JOIN sothich on usersothich.idSoThich=sothich.id WHERE usersothich.id=?', [id]);
-          for(let vl of rows){
-              listSoThich.push({
-                  id:vl.id,
-                  idSoThich:vl.idSoThich,
-                  name:vl.name,
-                  url:vl.url
-              });
-          }
-          return listSoThich;
-     }catch(err){
-         throw err;
-     }
+        try {
+            var listSoThich = [];
+            const rows = await query('SELECT usersothich.id,usersothich.idSoThich,sothich.name,sothich.url FROM usersothich JOIN sothich on usersothich.idSoThich=sothich.id WHERE usersothich.id=?', [id]);
+            for (let vl of rows) {
+                listSoThich.push({
+                    idSoThich: vl.idSoThich,
+                    name: vl.name,
+                    url: vl.url,
+                    isSoThich: true
+                });
+            }
+            if (listSoThich.length < 5 && listSoThich.length!=0) {
+                const rows = await query('SELECT * FROM sothich WHERE sothich.id not in(SELECT idSoThich FROM usersothich) LIMIT ?', [5 - listSoThich.length]);
+                for (let v of rows) {
+                    listSoThich.push({
+                        idSoThich: v.id,
+                        name: v.name,
+                        url: v.url,
+                        isSoThich: false
+                    });
+                }
+            }
+            return listSoThich;
+        } catch (err) {
+            throw err;
+        }
         console.log(rows);
     }
 

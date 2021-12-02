@@ -23,6 +23,7 @@ class UserInforSerivce {
            json['listImg']=listAnhJs;
             const listSoThich=await soThichService.getSoThichUser(id);
             json['listSoThich']=listSoThich;
+            json['anhDaiDien']=listAnhJs[0];
          return json;
         }catch(err){
             throw err;
@@ -31,12 +32,13 @@ class UserInforSerivce {
      async getListUser(){
       try{
         var listUser=[];
-        const rows=await query('SELECT * from userinfor  ORDER BY RAND() LIMIT 10');
+        const rows=await query('SELECT * from userinfor  WHERE id in (SELECT id FROM listanh) ORDER BY RAND() LIMIT 10');
         for(var vl of rows){
           var json={};
           json['id']=vl.id;
           json['msv']=vl.username;
           json['hoTen']=vl.hoTen;
+
           json['gender']=vl.gender;
           json['ngaySinh']=vl.ngaySinh;
           json['age']=this.#getAge(vl.ngaySinh);
