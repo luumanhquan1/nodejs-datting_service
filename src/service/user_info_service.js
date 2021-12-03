@@ -83,6 +83,7 @@ class UserInforSerivce {
                hoTen:vl.hoTen,
                gender:vl.gender,
                ngaySinh:vl.ngaySinh,
+               age : this.#getAge(vl.ngaySinh),
                imgUrl:anhDaiDien.length==0?'':anhDaiDien[0].url
            });
         }
