@@ -57,10 +57,10 @@ class UserInforSerivce {
     }
     async thichUser(id, idNguoiThich) {
         try {
-            const length=await query('SELECT * FROM userlike');
+            const length = await query('SELECT * FROM userlike');
             const likeTonTai = await query('SELECT * FROM userlike WHERE id=? AND idNguoiThich=?', [id, idNguoiThich]);
             console.log(likeTonTai);
-            if (likeTonTai.length == 0 || length==0) {
+            if (likeTonTai.length == 0 || length == 0) {
                 await query("INSERT INTO userlike(id,idNguoiThich) VALUES (?,?)", [id, idNguoiThich]);
                 return true;
             } else {
@@ -70,27 +70,27 @@ class UserInforSerivce {
             return false;
         }
     }
-   async getTopLike(){
-    try{
-        var listTop=[];
-        const rows=await query("SELECT * FROM userinfor JOIN(SELECT id,COUNT(id) as 'SoLuong' FROM `userlike` GROUP BY(id)  ORDER BY SoLuong DESC)a on userinfor.id=a.id");
-    
-        for(var vl of rows){
-            const anhDaiDien=await query("SELECT url FROM listanh WHERE id=? LIMIT 1",[vl.id]);
-           listTop.push({
-               id:vl.id,
-               username:vl.username,
-               hoTen:vl.hoTen,
-               gender:vl.gender,
-               ngaySinh:vl.ngaySinh,
-               age : this.#getAge(vl.ngaySinh),
-               imgUrl:anhDaiDien.length==0?'':anhDaiDien[0].url
-           });
+    async getTopLike() {
+        try {
+            var listTop = [];
+            const rows = await query("SELECT * FROM userinfor JOIN(SELECT id,COUNT(id) as 'SoLuong' FROM `userlike` GROUP BY(id)  ORDER BY SoLuong DESC)a on userinfor.id=a.id LIMIT 10");
+
+            for (var vl of rows) {
+                const anhDaiDien = await query("SELECT url FROM listanh WHERE id=? LIMIT 1", [vl.id]);
+                listTop.push({
+                    id: vl.id,
+                    username: vl.username,
+                    hoTen: vl.hoTen,
+                    gender: vl.gender,
+                    ngaySinh: vl.ngaySinh,
+                    age: this.#getAge(vl.ngaySinh),
+                    imgUrl: anhDaiDien.length == 0 ? '' : anhDaiDien[0].url
+                });
+            }
+            return listTop;
+        } catch (err) {
+            throw err;
         }
-       return listTop;
-    }catch(err){
-       throw err;
-    }
     }
     #getAge(ngaySinh) {
         var namSinh = ngaySinh.split('/')[2];
