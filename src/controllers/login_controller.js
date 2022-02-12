@@ -5,8 +5,10 @@ const { baseJson } = require('../config/helper/base_json');
 class LoginController {
     async login(req, res) {
         try {
+           
             export_controller.loginService.getUserInfoKMA(req.body.username, req.body.password).then(async (value) => {
-                if (value.status === 302) {
+                
+                if (value.status === 302||true) {
                     let result = await export_controller.loginService.isLogin(req.body.username, req.body.password);
                    
                     if (result.length == 0) {
